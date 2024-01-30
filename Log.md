@@ -38,16 +38,14 @@ def distance(state, action):
         [SETS[i] for i in taken_sets],
         np.array([False for _ in range(PROBLEM_SIZE)]),
     )
-    #print("currently_covered",currently_covered)
+    
  
     if action:
         newly_covered=SETS[action]
-        #print("newly_covered", newly_covered)
         difference=0
         for i in range(len(newly_covered)):
             if (newly_covered[i] == currently_covered[i] ):
                 difference+=1
-        #print("difference",difference)
         overlap=difference
         taken_sets.append(action)
         
@@ -61,7 +59,6 @@ def distance(state, action):
                 [SETS[i] for i in taken_sets],
                 np.array([False for _ in range(PROBLEM_SIZE)]),
             ))
-    #print("overlap",overlap)
     print("distance",distance)
     return overlap*distance
 ```
@@ -81,7 +78,6 @@ def old_h(state):
     largest_set_size = max(sum(np.logical_and(s, np.logical_not(already_covered))) for s in SETS)
     missing_size = PROBLEM_SIZE - sum(already_covered)
     optimistic_estimate = ceil(missing_size / largest_set_size)
-    #print("distance", optimistic_estimate, state.taken)
     return optimistic_estimate
 
 def old_f(state):
@@ -113,7 +109,7 @@ def h(state):
     optimistic_estimate = ceil(missing_size / largest_set_size)
 
     new_metric=max(sum(np.logical_not(np.logical_xor(SETS[s], already_covered))) for s in state.not_taken)
-    #print("new distance", optimistic_estimate*0.9+0.1*new_metric, state.taken)
+
     return optimistic_estimate*0.9+0.1*new_metric
     
 def f(state):
@@ -132,7 +128,6 @@ def old_astar():
 
     counter = 0
     _, current_state = frontier.get()
-    #print("initial current state", current_state)
     while not goal_check(current_state):
         counter += 1
         for action in current_state[1]:
@@ -140,11 +135,9 @@ def old_astar():
                 current_state.taken ^ {action},
                 current_state.not_taken ^ {action},
             )
-            #print("new state", new_state)
             frontier.put((old_f(new_state), new_state))
     
         _, current_state = frontier.get()
-        #print("current state",current_state)
     print("Old solution", current_state.taken)
     print(
         f"Solved in {counter:,} steps ({len(current_state.taken)} tiles)"
@@ -156,7 +149,6 @@ def new_astar():
 
     counter = 0
     _, current_state = frontier.get()
-    #print("initial current state", current_state)
     while not goal_check(current_state):
         counter += 1
         for action in current_state[1]:
@@ -164,11 +156,9 @@ def new_astar():
                 current_state.taken ^ {action},
                 current_state.not_taken ^ {action},
             )
-            #print("new state", new_state)
             frontier.put((f(new_state), new_state))
     
         _, current_state = frontier.get()
-        #print("current state",current_state)
     print("New solution", current_state.taken)
     print(
         f"Solved in {counter:,} steps ({len(current_state.taken)} tiles)"
@@ -230,9 +220,6 @@ def fitness(state):
         already_covered
     )
     
-    
-    #new_metric=max(sum(np.logical_not(np.logical_xor(not_taken[i],already_covered ))) for i in range(num_sets) if not state[i])
-    #print(valid,-cost)
     return valid, -cost if valid else 0
 
 used_indeces=[]
@@ -718,19 +705,13 @@ def evolving_strategy(state:Nim,w)->Nimply:
         #for each move i count how many strategies suggested it 
         #and sum the relative weights
         voting[key]=sum(value)+len(value)
-    
-    #print("dict", dic)
-    #print("voting",voting)
-    #print(voting)
+
     max_key = max(voting, key=voting.get)
-    #print(max_key)
     return max_key
 
 def fitness(w):
     
     counter=0
-    #index=w.index(max(w))
-    #print(index)
     for era in range(num_eras):
         
         if(era<num_eras/2):
@@ -753,7 +734,6 @@ def fitness(w):
             if match(gabriele,evolving_strategy,w)==1:
                 counter+=1 
             
-    #print("games won ", counter)
     return counter
 ```
 
@@ -787,9 +767,7 @@ for it in range(num_iterations):
         for i in range(len(weights)):
             #tweak the weights
             new_weights.append(weights[i]+normal(0.0,sigma))
-        #print(new_weights)
-        #new_counters[new_weights]=fitness(new_weights)
-        #print("fitness new weights")
+
         new_fitness=fitness(new_weights)
         if(new_fitness>counter):
             improvements+=1
@@ -807,7 +785,6 @@ for it in range(num_iterations):
     
            
     print("weights", weights)
-    #print("won matches", counter)
 
 index=weights.index(max(weights))
 
@@ -1102,7 +1079,6 @@ class Island:
 
 
 def migration(islands):
-    #print(len(islands[0].population))
     migrants=[]
     num_migrants=10
     for i in range(len(islands)):
@@ -1174,9 +1150,8 @@ for i, vector in enumerate(population):
 
 # Print the result
 for cluster_label, individuals in clustered_data.items():
-    #print(f"Cluster {cluster_label + 1}: {[ind for ind in individuals]}")
     islands.append(Island(population=individuals, crossover=one_cut_xover, scale_factor=1.0))
-    #print("len islands", len(islands))
+
 
 best_fitnesses=[0 for _ in range(num_islands)]
 max_fitness=0
@@ -1188,7 +1163,6 @@ last_fitness=0
 increasing=0
 decreasing=0
 
-#while max_fitness!=1.0:
 for i in range(30000):   
     
     last_fitness=max_fitness
@@ -1230,15 +1204,13 @@ for i in range(30000):
     it=i+1
     calls.append(fitness_function.calls)
     if max_fitness==1.0:
-        break;
-    #print(len(islands[0].population))
+        break
 ```
 
 ```python
 max_value=max(max_fitnesses)
 ind=max_fitnesses.index(max_value)
 print(ind)
-#plt.plot( calls[0:ind], max_fitnesses[0:ind])
 plt.plot( calls, max_fitnesses)
 plt.title("Problem 5 Island model, fitness calls: "+ str(calls[ind]) +"\n fitness: "+str(max_value))
 plt.xlabel("calls")
@@ -1274,7 +1246,7 @@ def new_mutate(state:Individual, fitness)->Individual:
         gen=copy(state.genotype)
         gen[j]= 1-gen[j]
         individuals.append(Individual(fitness, genotype=gen))
-        #print(individuals[j])
+        
     return individuals
 
 def hill_climbing():
@@ -1285,7 +1257,6 @@ def hill_climbing():
     is_better=True
     not_improving=0
     current_state=Individual(fitness_hc)
-    #new_state=current_state
     is_bitflip=False
 
     for _ in range(500000):
@@ -1323,11 +1294,8 @@ def hill_climbing():
         fitnesses.append(current_state.fitness)
 
         if counter%50==0:
-
             print("current ", current_state.fitness)
-        
-        #print("new", new_state.fitness)
-        #print("calls", fitness_hc.calls)
+    
 
     print( f"Solved in {counter:,} steps")
     print("final solution", current_state.fitness)
@@ -1337,7 +1305,6 @@ hill_climbing()
 print(fitness_hc.calls)
 max_value=max(fitnesses)
 ind=fitnesses.index(max_value)
-#plt.plot(calls[0:ind+1], fitnesses[0:ind+1])
 plt.plot(calls, fitnesses)
 plt.title("Problem 10 hill climbing,calls: "+ str(calls[ind]) +"\n fitness: "+str(max_value))
 plt.xlabel("calls")
@@ -1425,7 +1392,6 @@ class QAgent:
 
     def move(self, possible_moves, state):
         # Exploration-exploitation trade-off
-        #print(self.q_table)
         if np.random.rand() < self.exploration_prob: #Explore
             return choice(list(possible_moves))
         else: #Exploit
@@ -1474,13 +1440,10 @@ def game(p1,p2, train = True):
     agent = None
     
     while True:
-        #print(current_player, index)
         
         if index == 0:
             move = current_player.move(available, state)
-           
-            #print(available)
-            #print(move)
+          
             state.x.add(move)
             
             moves.append(move)
@@ -1586,7 +1549,8 @@ I received a lot of reviews and suggestions. The advices were really usefull and
 # QUIXO
 *I have collaborated with Laura Amoroso (s313813)*
 
-We tried to implement different strategies to compete against the random player and win more than 50% of the games.
+We tried to implement different strategies to compete against the random player and win more than 50% of the games. We mainly focused on the Minmax algorithm that seems to suits better with our problem, in fact, we obtained 100% of winning.
+Moreover we implemented a Q Learning agent that updates the q table after each move and the Montecarlo Q learning agent that has a higher exploration rate and updates the values of the q table at the end of each game.
 
 ## Minmax with alpha beta pruning
 
@@ -1767,6 +1731,7 @@ The evaluation of the intermediate state has been implemented to avoid reaching 
                 return count_ones - count_zeros
 
 ```
+
 The following functions calculate all the possible moves playable given the board and then checks if the move can be played by the minmax player.
 
 ```python
@@ -1946,7 +1911,7 @@ class MontecarloAgent(Player):
         self.symbol=symbol
         self._winning_games=0
         self._drawn_games=0
-        self.exploration_rate=1
+        self.exploration_rate=0.7
         self.rewards=[]
         self.gamma=0.9
         self.changing_symbol=False
@@ -1983,10 +1948,8 @@ class MontecarloAgent(Player):
                 else:
                     state_key = (frozenset(set(mirror_points(frozenset(state[0])))), frozenset(set(mirror_points(frozenset(state[1])))))
                     if state_key in self.q_table:
-                        #print("board to mirror, ", board)
                         if board.size!=0:
                             board = mirror_board(board)
-                        #print("mirrored board",board)
                         is_in_qtable = True
                         rotation_type = "mirrored" 
                     else:
@@ -2013,13 +1976,10 @@ class MontecarloAgent(Player):
                 direction = Move.RIGHT
             else: 
                 direction = Move.TOP
-                
-            #print("iniitial", action)
-            #print("new", (new_point, direction) )
+    
             return ((new_point[1], new_point[0]), direction)
         
         elif rotation_type == "anticlockwise":
-            #print("anticlockwise")
             initial_point = action[0]
             direction = action[1]
             
@@ -2036,7 +1996,6 @@ class MontecarloAgent(Player):
 
             return ((new_point[1], new_point[0]), direction)
         else: #mirrored
-            
             initial_point = action[0]
             direction = action[1]
             
@@ -2068,7 +2027,6 @@ class MontecarloAgent(Player):
                 direction = Move.RIGHT
             else: 
                 direction = Move.TOP
-            
             return ((new_point[1], new_point[0]), direction)
         
         elif rotation_type == "clockwise":
@@ -2105,15 +2063,11 @@ The following funciton is the one used to select the move that has to be played.
 If the action is not present in the table it is inserted. Once the action has been chosen, it is evaluated and rewarded.
 
 ```python
-  def make_move(self,game, state)-> tuple[tuple[int, int], Move]:
+def make_move(self,game, state)-> tuple[tuple[int, int], Move]:
         
         """ function that returns a move for the montecarlo agent """
-        if self.gamma<0.99:
-            self.gamma*=1.01
-
         action=None
         
-        #print(state)
         board = game.get_board()
         state_key,board,is_in_qtable,rotation_type=self.transform_state(state, game.get_board())
 
@@ -2125,25 +2079,17 @@ If the action is not present in the table it is inserted. Once the action has be
             
             if not is_in_qtable:
                 self.q_table[state_key] = dict.fromkeys([action], 0)
-                
-            """            else:
-                self.q_table[state_key][action] = 0 """
-            
+ 
         else:
-         
             if not is_in_qtable and self.is_train:
                 self.q_table[state_key] = dict.fromkeys(available_moves, 0)
                 is_in_qtable=True
             #choose the action based on the q table
             if is_in_qtable: 
-
-               
                 action = max(self.q_table[state_key], key=self.q_table[state_key].get)
                 
-            
                 #If the best action has a negative value, all the possible moves are added 
                 if self.q_table[state_key][action] < 0 and len(self.q_table[state_key])==1:
- 
                     for move in available_moves:
                         if move not in self.q_table[state_key].keys():
  
@@ -2277,81 +2223,78 @@ The Q table is updated following this formula:
 ![Alt text](image-6.png)
 
 ```python
- def update_q_table(self, trajectory, reward):
-        """
-        update the values in the q table
-        """
-        counter=0
-        for state,action in trajectory:
-            counter+=1
+def update_q_table(self, trajectory):
+    """
+    update the values in the q table
+    """
+    counter=0
+    for state,action in trajectory:
+        counter+=1
 
-            new_state,_,_,rotation_type=self.transform_state(state)
-            new_action=self.rotate_action(rotation_type, action)
-            
-            if (new_state) in self.q_table and new_action in self.q_table[new_state]:
-               self.q_table[new_state][new_action]+=0.001* (sum(self.rewards) -  self.q_table[new_state][new_action])
+        new_state,_,_,rotation_type=self.transform_state(state)
+        new_action=self.rotate_action(rotation_type, action)
+        
+        if (new_state) in self.q_table and new_action in self.q_table[new_state]:
+            self.q_table[new_state][new_action]+=0.001* (sum(self.rewards) -  self.q_table[new_state][new_action])
                 
 ```
 
 
 ```python
- def train(self,opponent):
-        self._winning_games=0
-        self.changing_symbol=False
-        self.is_train=True
-        num_iterations =100_000
-        
-        print("Montecarlo is training...")
-        for i in tqdm(range(num_iterations)):
+def train(self,opponent):
+    self._winning_games=0
 
-            # if i>(num_iterations/3)*2 and self.exploration_rate>0.1:
-            #     self.exploration_rate=((1-self.exploration_rate)*10)/i
-                #self.exploration_rate*=0.99
-            game=MontecarloGame()
-            
-            if self.symbol==0:
-                _,winner=game.play(self, opponent)
-            else:
-                _,winner=game.play(opponent, self)
+    self.is_train=True
+    num_iterations=5_000
     
-            if i>num_iterations/2:
-                self.changing_symbol=True
-                self.symbol=1-self.symbol
-                opponent.symbol=1-self.symbol
-                
-            if winner==self.symbol:
-                self.add_winning()
-        
-        print("My player won ", self._winning_games/num_iterations)
-        print(self.exploration_rate)
+    print("Montecarlo is training...")
+    for i in tqdm(range(num_iterations)):
 
-    def test(self, opponent):
+        # if i>(num_iterations/4)*3 and self.exploration_rate>0.1:
+        #     #self.exploration_rate=((1-self.exploration_rate)*10)/i 
+        #     self.exploration_rate*=0.99
+        game=MontecarloGame()
         
-        print("Montecarlo is testing...")
-        self._winning_games=0
-        self.is_train=False
-        self.changing_symbol=False
-        #self.symbol=0
-        num_iterations=100
+        if self.symbol==0:
+            _,winner=game.play(self, opponent)  
+        else:
+            _,winner=game.play(opponent, self)
 
-        self.exploration_rate=0
-        for i in tqdm(range(num_iterations)):
-            game=MontecarloGame()
+        if i==num_iterations/2: 
+        #if random()<0.5:
+            self.symbol=1-self.symbol
+            opponent.symbol=1-self.symbol
+
+        if winner==self.symbol:
+            self.add_winning()
+    
+    print("My player won ", self._winning_games/num_iterations)
+
+
+def test(self, opponent):
+    self._winning_games=0
+    self.is_train=False
+    self.changing_symbol=False
+    #self.symbol=0
+    num_iterations=100
+
+    self.exploration_rate=0
+    
+    for i in tqdm(range(num_iterations)):
+        game=MontecarloGame()
+        
+        if self.symbol==0:
+            _,winner=game.play(self, opponent)
+        else:
+            _,winner=game.play(opponent, self)
             
-            if self.symbol==0:
-                _,winner=game.play(self, opponent)
-            else:
-                _,winner=game.play(opponent, self)
-                
-            if i>num_iterations/2:
-                self.changing_symbol=True
-                self.symbol=1-self.symbol
-                opponent.symbol=1-self.symbol
-
-            if winner==self.symbol:
-                self.add_winning()
+        """  if i==num_iterations/2:
+            self.symbol=1-self.symbol
+            opponent.symbol=1-self.symbol  """  
         
-        print("My player won ", self._winning_games/num_iterations)
+        if winner==self.symbol:
+            self.add_winning()
+    print("My player won ", self._winning_games/num_iterations*100, "% of the times")
 ```
 
 We defined a subclass of the game in order to implement the play method able to memorize the trajectory and update the values in the qtable.
@@ -2384,14 +2327,10 @@ class MontecarloGame(Game):
                         state[1].add((x,y))
             while not ok:
                 from_pos, slide = current_player.make_move(self,state)
-                #super().print()
 
-                #print(from_pos,slide)
                 ok = self.__move(from_pos, slide, current_player.symbol)
             
             move=(from_pos,slide)
-            #print("player ", index, move)
-
 
             if(super().check_winner()!=-1):
                 trajectory.append((deepcopy(state),move))
@@ -2404,31 +2343,259 @@ class MontecarloGame(Game):
 
         if isinstance(player1, MontecarloAgent):
             final_reward, winner= (5, 0) if super().check_winner()==player1.symbol else (-5,1)
-            #print(trajectory[-1])
+
             player1.rewards.append(final_reward)
             if player1.is_train:
-                player1.update_q_table(trajectory,sum(player1.rewards))
-                #player1.print_q_table()
+                player1.update_q_table(trajectory)
+
             player1.rewards=[]
 
         elif isinstance(player2, MontecarloAgent):
             final_reward, winner= (5, 1) if super().check_winner()==player2.symbol else (-5,0)
-            #print(trajectory[-1])
             player2.rewards.append(final_reward)
             
             if player2.is_train:
-                player2.update_q_table(trajectory,sum(player2.rewards))
+                player2.update_q_table(trajectory)
             player2.rewards=[]
 
-
-        #print(self.get_board())
         return trajectory, winner
 
     def set_board(self,board):
-
         self._board=board
 
 ```
+
+## Q Learning Agent
+
+```python
+class QAgent(MontecarloAgent):
+    
+    def __init__(self, symbol):
+        self.alpha=0.7
+        self.exploration_rate=0.3
+        self.gamma=0.9
+
+        super().__init__(symbol)
+
+    def make_move(self, game, state) -> tuple[tuple[int, int], Move]:
+
+        """ if self.alpha>0.1:
+            self.alpha*=0.99 """
+
+        """ if self.gamma<0.99:
+            self.gamma*=1.01 """
+
+        action=None
+        
+        board = game.get_board()
+        state_key,board,is_in_qtable,rotation_type=self.transform_state(state, game.get_board())
+
+        available_moves=list(self.get_legal_moves(board))
+  
+        if random() < self.exploration_rate and self.is_train:
+            # sometimes make random moves
+            action = choice(available_moves)
+            
+            if not is_in_qtable:
+                self.q_table[state_key] = dict.fromkeys([action], 0)
+ 
+        else:
+            if not is_in_qtable and self.is_train:
+                self.q_table[state_key] = dict.fromkeys(available_moves, 0)
+                is_in_qtable=True
+            #choose the action based on the q table
+            if is_in_qtable: 
+                action = max(self.q_table[state_key], key=self.q_table[state_key].get)
+                
+                #If the best action has a negative value, all the possible moves are added 
+                if self.q_table[state_key][action] < 0 and len(self.q_table[state_key])==1:
+                    for move in available_moves:
+                        if move not in self.q_table[state_key].keys():
+ 
+                            self.q_table[state_key][move]=0
+
+                    action = max(self.q_table[state_key], key=self.q_table[state_key].get)
+                     
+                         
+            if action is None or action not in available_moves:
+
+                action=choice(list(available_moves))
+
+                if self.is_train:
+                    self.q_table[state_key] = dict.fromkeys([action], 0) 
+
+
+        if self.is_train:            
+            count_zeros=0
+            count_ones=0
+            for x in range(game.get_board().shape[0]):  
+                for y in range(game.get_board().shape[1]):
+                    
+                    el=game.get_board()[x][y]
+                             
+                    if el==0:
+                        count_zeros+=1
+                    elif el==1:
+                        count_ones+=1
+           
+            if self.symbol==0:
+                reward=count_zeros - count_ones
+            else:
+                reward=count_ones - count_zeros 
+            
+            self.update_q_table(action, available_moves, state_key,reward)
+        new_action= self.transform_action(rotation_type,action)
+        return new_action
+```
+
+The agent is trained 50% of time starting to pplay as first and 50% as second.
+
+```python
+def train(self,opponent):
+        self._winning_games=0
+        self.changing_symbol=False
+        self.is_train=True
+        num_iterations=1_000
+        
+        print("Q Agent is training...")
+        for i in tqdm(range(num_iterations)):
+
+            #if i>(num_iterations/3)*2 and self.exploration_rate>0.1:
+                #self.exploration_rate=((1-self.exploration_rate)*10)/i 
+                #self.exploration_rate*=0.99
+            game=QGame()
+            
+            if self.symbol==0:
+                trajectory,final_reward,winner=game.play(self, opponent)  
+            else:
+                trajectory,final_reward,winner=game.play(opponent, self)
+    
+            if final_reward == -1:
+            
+                  s=trajectory[-2][0]
+                  a=trajectory[-2][1]
+
+            else:  
+                  s=trajectory[-1][0]
+                  a=trajectory[-1][1] 
+
+            s,_,_,rotation_type=self.transform_state(s)
+            a=self.rotate_action(rotation_type, a)                  
+
+            self.update_q_table(a,(),(frozenset(s[0]),frozenset(s[1])),final_reward)
+            
+      
+            #if i==num_iterations/2:
+            if random()<0.5:
+                self.symbol=1-self.symbol
+                opponent.symbol=1-self.symbol
+                
+                
+            if winner==self.symbol:
+                self.add_winning()
+        
+        print("My player won ", self._winning_games/num_iterations)
+        print(self.exploration_rate)
+
+    def test(self, opponent):
+
+        self._winning_games=0
+        self.is_train=False
+        self.changing_symbol=False
+        #self.symbol=0
+        num_iterations=100
+
+        self.exploration_rate=0
+        
+        for i in tqdm(range(num_iterations)):
+            game=QGame()
+            
+            if self.symbol==0:
+                _,_,winner=game.play(self, opponent)
+            else:
+                _,_,winner=game.play(opponent, self)
+                
+            """ if i==num_iterations/2:
+                self.symbol=1-self.symbol
+                opponent.symbol=1-self.symbol   """
+            
+            if winner==self.symbol:
+                self.add_winning()
+        print("My player won ", self._winning_games/num_iterations*100, "% of the times")
+```
+
+The q table is updated after each move as it follows: 
+```python
+  def update_q_table(self, action, available_moves,state_key, reward=None):
+
+        """ update the q table """
+        if state_key not in self.q_table:
+            self.q_table[state_key] = dict.fromkeys([action], 0)
+
+        state=(set(state_key[0]),set(state_key[1]))
+        new_state = deepcopy(state)
+        new_state[0].add(action)
+        next_state_key = (frozenset(new_state[0]), frozenset(new_state[1]))
+
+        if next_state_key not in self.q_table:
+            self.q_table[next_state_key] = dict.fromkeys(available_moves, 1)
+        
+        self.q_table[state_key][action] = (1 - self.alpha) * self.q_table[state_key].get(action, 0) + self.alpha * (reward + self.gamma * (max(self.q_table[next_state_key].values(), default=0)))
+```
+
+
+```python
+class QGame(Game):
+
+    def __move(self, from_pos, slide, index):
+        return super()._Game__move(from_pos, slide, index)
+
+
+    def play(self, player1: Player, player2: Player) -> int:
+
+        trajectory=list()
+        state=(set(), set())
+        
+        players=[player1,player2]
+        #print(players)
+        index=0
+        while True:
+
+            ok = False
+            current_player=players[index]
+            for x in range(super().get_board().shape[0]): 
+                for y in range(super().get_board().shape[1]):
+                    if super().get_board()[x][y]==0:
+                        state[0].add((x,y))
+                    elif super().get_board()[x][y]==1:
+                        state[1].add((x,y))
+            while not ok:
+                from_pos, slide = current_player.make_move(self,state)
+
+                ok = self.__move(from_pos, slide, current_player.symbol)
+            
+            move=(from_pos,slide)
+            
+            if(super().check_winner()!=-1):
+                trajectory.append((deepcopy(state),move))
+                break
+
+            index=1-index
+
+            trajectory.append((deepcopy(state),move))
+            state=(set(), set())            
+
+        if isinstance(player1, QAgent):
+            final_reward, winner= (5, 0) if super().check_winner()==player1.symbol else (-5,1)
+
+
+        elif isinstance(player2, QAgent):
+            final_reward, winner= (5, 1) if super().check_winner()==player2.symbol else (-5,0)
+
+        return trajectory, final_reward, winner
+
+```
+
 
 ## QUIXO MAIN
 

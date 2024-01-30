@@ -89,7 +89,7 @@ class QAgent(MontecarloAgent):
         self._winning_games=0
         self.changing_symbol=False
         self.is_train=True
-        num_iterations=1_000
+        num_iterations=50_000
         
         print("Q Agent is training...")
         for i in tqdm(range(num_iterations)):
@@ -119,8 +119,8 @@ class QAgent(MontecarloAgent):
             self.update_q_table(a,(),(frozenset(s[0]),frozenset(s[1])),final_reward)
             
       
-            #if i==num_iterations/2:
-            if random()<0.5:
+            if i==num_iterations/2:
+            #if random()<0.5:
                 self.symbol=1-self.symbol
                 opponent.symbol=1-self.symbol
                 

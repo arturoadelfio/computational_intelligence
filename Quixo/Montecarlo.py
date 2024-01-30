@@ -350,8 +350,8 @@ class MontecarloAgent(Player):
             else:
                 _,winner=game.play(opponent, self)
     
-            #if i==num_iterations/2: 
-            if random()<0.5:
+            if i==num_iterations/2: 
+            #if random()<0.5:
                 self.symbol=1-self.symbol
                 opponent.symbol=1-self.symbol
 

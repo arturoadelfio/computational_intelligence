@@ -57,7 +57,7 @@ def test_montecarlo(agent: MontecarloAgent):
       
     with open('my_dict.pkl', 'rb') as file:
         agent.q_table=pickle.load(file)
-    agent.print_q_table()
+    #agent.print_q_table()
 
     opponent=RandomPlayer(1-agent.symbol)
 
@@ -148,17 +148,17 @@ if __name__ == '__main__':
     #minmax_simulation()
     agent=MontecarloAgent(1)
     
-    #agent=QAgent(0)
+    agent=QAgent(0)
 
     #train_montecarlo(agent)
 
-    print("Playing as first")
-    #train_qagent(agent)
+    #print("Playing as first")
+    train_qagent(agent)
     #agent=QAgent(0)
-    agent=MontecarloAgent(1)
+    #agent=MontecarloAgent(1)
     #agent.print_q_table()
-    test_montecarlo(agent)
-    #test_qagent(agent)
+    #test_montecarlo(agent)
+    test_qagent(agent)
     #agent.test(RandomPlayer(0))
 
  
