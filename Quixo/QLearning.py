@@ -224,5 +224,3 @@ class QGame(Game):
             final_reward, winner= (5, 1) if super().check_winner()==player2.symbol else (-5,0)
 
         return trajectory, final_reward, winner
-
-

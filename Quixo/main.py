@@ -153,7 +153,7 @@ if __name__ == '__main__':
     #train_montecarlo(agent)
 
     #print("Playing as first")
-    train_qagent(agent)
+    #train_qagent(agent)
     #agent=QAgent(0)
     #agent=MontecarloAgent(1)
     #agent.print_q_table()
